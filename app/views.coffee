@@ -13,11 +13,25 @@ class AppAid.Views.MainView extends KDView
   constructor: (@options={})->
     @options.cssClass ?= "appaid-mainview"
     @options.vmName ?= KD.singletons.vmController.defaultVmName
-    @options.manifest ?= KD.singletons.appManager.getFrontAppManifest()
+
+    # We used to use `KD.singletons.appManager.getFrontAppManifest()` to get
+    # the manifest, but it seems during App Initialization that the "in front"
+    # app is not entirely known. So, we're grabbing our app manifest manually.
+    @options.manifest ?= KD.getAppOptions('AppAid')
+
     super @options
+
+    # As described above, getting the manifest has proven "interesting"
+    # in the past. So, i check now, just to be safe.
+    if not @options.manifest?
+      notify 'Manifest could not load, halting app.'
+      return
+
+    #@indexjsHelper
     
     barHeader = new KDHeaderView
-      title     : 'App Aid'
+      title     : @options.manifest.description
+      type      : 'medium'
 
     barCompileBtn = new KDButtonView
       title     : 'Compile and Preview'
@@ -27,19 +41,24 @@ class AppAid.Views.MainView extends KDView
     barSplit = new KDSplitView
       type      : 'vertical'
       resizable : false
-      sizes     : ['30%', '40%', '30%']
+      sizes     : ['40%', '30%', '30%']
       views     : [barHeader, null, barCompileBtn]
 
     @previewView = new KDView()
 
-    console.log 'Wut?'
 
-    @addSubView barSplit
-    @addSubView @previewView
+    @addSubView new KDSplitView
+      type      : 'horizontal'
+      resizable : false
+      sizes     : ['40px', '90%']
+      views     : [barSplit, @previewView]
 
     # Let the hacks begin.
     _appView = window.appView
     window.appView = @previewView
+
+    # And finally, add our placeholder view.
+    @previewView.addSubView new AppAid.Views.PreviewDefault()
 
 
   # ### Compile App
@@ -84,6 +103,11 @@ class AppAid.Views.MainView extends KDView
 class AppAid.Views.PreviewDefault extends JView
   constructor: -> super
 
-  pistachio: -> "Hello!"
+  pistachio: ->
+    """
+    <h1 style="font-size: 90px; text-align: center; margin-top: 80px;">
+      Your App Here
+    </h1>
+    """
 
 
