@@ -3,7 +3,7 @@
 #
 
 # Our App variable is global, defined in `./app/core.coffee`
-{MainView} = App.Views
+{MainView} = AppAid.Views
 
 do ->
   #Enable Logs for Development
