@@ -27,11 +27,27 @@ class AppAid.Views.MainView extends KDView
       notify 'Manifest could not load, halting app.'
       return
 
-    #@indexjsHelper
+    # The index Helper is a FSHelper that allows us to fetch the file contents.
+    #fshelper_path = "[#{@options.vmName}]#{@options.manifest.path}/index.js"
+    #@indexjsHelper = FSHelper.createFileFromPath fshelper_path
     
     barHeader = new KDHeaderView
       title     : @options.manifest.description
       type      : 'medium'
+
+    barSelectApp = new KDSelectBox
+      label: new KDLabelView
+        title: 'App:'
+
+    KD.singletons.vmController.run
+      vmName    : @options.vmName
+      withArgs  : "ls ~/Applications"
+      (err, res) ->
+        if err? then notify err.message; return
+        kdAppNames = res.split('\n')[..-1]
+        kdAppNames = (
+          {title: appname, value: appname} for appname in kdAppNames)
+        barSelectApp.setSelectOptions kdAppNames
 
     barCompileBtn = new KDButtonView
       title     : 'Compile and Preview'
@@ -42,7 +58,7 @@ class AppAid.Views.MainView extends KDView
       type      : 'vertical'
       resizable : false
       sizes     : ['40%', '30%', '30%']
-      views     : [barHeader, null, barCompileBtn]
+      views     : [barHeader, barSelectApp, barCompileBtn]
 
     @previewView = new KDView()
 
