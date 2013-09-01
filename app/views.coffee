@@ -27,9 +27,9 @@ class AppAid.Views.MainView extends KDView
       notify 'Manifest could not load, halting app.'
       return
 
-    # The index Helper is a FSHelper that allows us to fetch the file contents.
-    #fshelper_path = "[#{@options.vmName}]#{@options.manifest.path}/index.js"
-    #@indexjsHelper = FSHelper.createFileFromPath fshelper_path
+    @options.targetApp = {}
+    # Soon we'll offer targetted VMs, but for now default it.
+    @options.targetApp.vmName = @options.vmName
 
 
 
@@ -42,7 +42,7 @@ class AppAid.Views.MainView extends KDView
     KD.singletons.vmController.run
       vmName    : @options.vmName
       withArgs  : "ls ~/Applications"
-      (err, res) ->
+      (err, res) =>
         if err? then notify err.message; return
         kdAppNames = res.split('\n')[..-1]
         kdAppNameOpt = []
@@ -50,11 +50,15 @@ class AppAid.Views.MainView extends KDView
           if appname is 'appaid.kdapp' then continue
           kdAppNameOpt.push {title: appname, value: appname}
         appSelectBox.setSelectOptions kdAppNameOpt
+        # Don't forget to add our targetApp Default
+        @options.targetApp.appName = kdAppNames[0]
 
     appLoadBtn = new KDButtonView
       title     : 'Load App'
       callback  : =>
-        notify 'Loading..'
+        @loadApp (err) ->
+          if err?
+            notify "Error during Load: #{err.message}"
         
 
     appSplit = new KDSplitView
@@ -83,7 +87,6 @@ class AppAid.Views.MainView extends KDView
 
     @previewView = new KDView()
 
-
     @addSubView new KDSplitView
       type      : 'horizontal'
       resizable : false
@@ -100,26 +103,54 @@ class AppAid.Views.MainView extends KDView
 
   # ### Compile App
   #
-  compileApp: (callback) ->
-    new KDNotificationView
-      title: 'Compiling...'
+  compileApp: (callback=->) ->
+    {
+      appName
+      vmName
+    } = @options.targetApp
+    notify "Compiling '#{appName}'..."
 
     KD.singletons.vmController.run
-      vmName    : @options.vmName
-      withArgs  : "kdc #{Settings.APP_DIR}"
+      vmName    : vmName
+      withArgs  : "kdc ~/Applications/#{appName}"
       (err, res) ->
         # Currently ignoring the response of kdc.
         callback err
 
+  # ### Load App
+  #
+  loadApp: (callback=->) ->
+    console.log "Wtf?"
+    console.log @options
+    {
+      appName
+      vmName
+    } = @options.targetApp
+    notify "Loading '#{appName}'..."
+
+    @appIndexHelper = FSHelper.createFileFromPath(
+      "[#{vmName}]~/Applications/#{appName}"
+    )
+    @appIndexHelper.exists (err, exists) =>
+      if exists
+        @previewApp callback
+      else
+        @compileApp (err) =>
+          if err? then return callback err
+          @previewApp callback
+
 
   # ### Preview App
   #
-  previewApp: ->
-    new KDNotificationView
-      title: 'Loading preview...'
+  previewApp: (callback=->) ->
+    {
+      appName
+      vmName
+    } = @options.targetApp
+    notify "Previewing '#{appName}'..."
 
-    @indexjsHelper.fetchContents (err, res) =>
-      if err? then new KDNotificationView title: err.message
+    @appIndexHelper.fetchContents (err, res) =>
+      if err? then return callback err
       console.log 'Fetched! '+ res?.length
 
       # By destroying the subviews, we ensure (or try to) that the newly
