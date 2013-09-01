@@ -45,14 +45,17 @@ class AppAid.Views.MainView extends KDView
       (err, res) ->
         if err? then notify err.message; return
         kdAppNames = res.split('\n')[..-1]
-        kdAppNames = (
-          {title: appname, value: appname} for appname in kdAppNames)
-        appSelectBox.setSelectOptions kdAppNames
+        kdAppNameOpt = []
+        for appname in kdAppNames
+          if appname is 'appaid.kdapp' then continue
+          kdAppNameOpt.push {title: appname, value: appname}
+        appSelectBox.setSelectOptions kdAppNameOpt
 
     appLoadBtn = new KDButtonView
       title     : 'Load App'
       callback  : =>
-        notify 'Loading..!'
+        notify 'Loading..'
+        
 
     appSplit = new KDSplitView
       type      : 'vertical'
