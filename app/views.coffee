@@ -94,12 +94,10 @@ class AppAid.Views.MainView extends KDView
       sizes     : ['40px', '90%']
       views     : [barSplit, @previewView]
 
-    # Let the hacks begin.
-    _appView = window.appView
-    window.appView = @previewView
-
     # And finally, add our placeholder view.
     @previewView.addSubView new AppAid.Views.PreviewDefault()
+
+
 
 
   # ### Compile App
@@ -121,8 +119,6 @@ class AppAid.Views.MainView extends KDView
   # ### Load App
   #
   loadApp: (callback=->) ->
-    console.log "Wtf?"
-    console.log @options.targetApp
     {
       appName
       vmName
@@ -150,6 +146,12 @@ class AppAid.Views.MainView extends KDView
     } = @options.targetApp
     notify "Previewing '#{appName}'..."
 
+    # Let the hacks begin.
+    if appView?.id isnt @previewView.id
+      console.log "Overwriting local appView. Previous id:#{@parent.id}, "+
+        "new id:#{@previewView.id}"
+      appView = @previewView
+    
     @appIndexHelper.fetchContents (err, res) =>
       if err? then return callback err
       console.log 'Fetched! '+ res?.length
