@@ -30,12 +30,12 @@ class AppAid.Views.MainView extends KDView
     # The index Helper is a FSHelper that allows us to fetch the file contents.
     #fshelper_path = "[#{@options.vmName}]#{@options.manifest.path}/index.js"
     #@indexjsHelper = FSHelper.createFileFromPath fshelper_path
-    
-    barHeader = new KDHeaderView
-      title     : @options.manifest.description
-      type      : 'medium'
 
-    barSelectApp = new KDSelectBox
+
+
+    # #### App Split Section
+    # Our app split section defines the views for the app selection splitview.
+    appSelectBox = new KDSelectBox
       label: new KDLabelView
         title: 'App:'
 
@@ -47,18 +47,36 @@ class AppAid.Views.MainView extends KDView
         kdAppNames = res.split('\n')[..-1]
         kdAppNames = (
           {title: appname, value: appname} for appname in kdAppNames)
-        barSelectApp.setSelectOptions kdAppNames
+        appSelectBox.setSelectOptions kdAppNames
+
+    appLoadBtn = new KDButtonView
+      title     : 'Load App'
+      callback  : =>
+        notify 'Loading..!'
+
+    appSplit = new KDSplitView
+      type      : 'vertical'
+      resizable : false
+      sizes     : ['50%', '50%']
+      views     : [appSelectBox, appLoadBtn]
+
+    
+    # #### Bar Split Section
+    # The bar is the top bar split thing.
+    barHeader = new KDHeaderView
+      title     : @options.manifest.description
+      type      : 'medium'
 
     barCompileBtn = new KDButtonView
       title     : 'Compile and Preview'
       callback  : =>
-        @compileApp => @previewApp -> new KDNotification title: 'Success!'
+        @compileApp => @previewApp -> notify 'Success!'
 
     barSplit = new KDSplitView
       type      : 'vertical'
       resizable : false
-      sizes     : ['40%', '30%', '30%']
-      views     : [barHeader, barSelectApp, barCompileBtn]
+      sizes     : ['30%', '40%', '30%']
+      views     : [barHeader, appSplit, barCompileBtn]
 
     @previewView = new KDView()
 
