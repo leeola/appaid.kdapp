@@ -54,7 +54,7 @@ class AppAid.Views.MainView extends KDView
         kdAppNames = res.split('\n')[...-1]
         kdAppNameOpt = []
         for appname in kdAppNames
-          if appname is 'appaid.kdapp' then continue
+          #if appname is 'appaid.kdapp' then continue
           kdAppNameOpt.push {title: appname, value: appname}
         appSelectBox.setSelectOptions kdAppNameOpt
         # Don't forget to add our targetApp Default
@@ -153,8 +153,10 @@ class AppAid.Views.MainView extends KDView
         coFiles = /\.coffee/.test res
         cssFiles = /\.css/.test res
         console.log('Watch returned!', coFiles, cssFiles, res)
-        console.log('autoCompile:', @autoCompile)
 
+        if not KD.singletons.appManager.get(@options.manifest.name)?
+          console.log 'Watch returned, but app is closed. Exiting.'
+          return
         if not @autoCompile then return
 
         checkPreviewApp = =>
