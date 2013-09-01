@@ -44,18 +44,19 @@ class AppAid.Views.MainView extends KDView
       withArgs  : "ls ~/Applications"
       (err, res) =>
         if err? then notify err.message; return
-        kdAppNames = res.split('\n')[..-1]
+        kdAppNames = res.split('\n')[...-1]
         kdAppNameOpt = []
         for appname in kdAppNames
           if appname is 'appaid.kdapp' then continue
           kdAppNameOpt.push {title: appname, value: appname}
         appSelectBox.setSelectOptions kdAppNameOpt
         # Don't forget to add our targetApp Default
-        @options.targetApp.appName = kdAppNames[0]
+        @options.targetApp.appName = appSelectBox.getValue()
 
     appLoadBtn = new KDButtonView
       title     : 'Load App'
       callback  : =>
+        @options.targetApp.appName = appSelectBox.getValue()
         @loadApp (err) ->
           if err?
             notify "Error during Load: #{err.message}"
@@ -121,7 +122,7 @@ class AppAid.Views.MainView extends KDView
   #
   loadApp: (callback=->) ->
     console.log "Wtf?"
-    console.log @options
+    console.log @options.targetApp
     {
       appName
       vmName
@@ -129,7 +130,7 @@ class AppAid.Views.MainView extends KDView
     notify "Loading '#{appName}'..."
 
     @appIndexHelper = FSHelper.createFileFromPath(
-      "[#{vmName}]~/Applications/#{appName}"
+      "[#{vmName}]~/Applications/#{appName}/index.js"
     )
     @appIndexHelper.exists (err, exists) =>
       if exists
