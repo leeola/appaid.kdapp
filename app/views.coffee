@@ -32,6 +32,13 @@ class AppAid.Views.MainView extends KDView
     @options.targetApp.vmName = @options.vmName
 
 
+    # Autocompile States.
+    # @watching means that the process is currently running.
+    @watching = false
+    # @autoCompile means that we want to auto compile.
+    @autoCompile = false
+
+
 
     # #### App Split Section
     # Our app split section defines the views for the app selection splitview.
@@ -80,11 +87,27 @@ class AppAid.Views.MainView extends KDView
       callback  : =>
         @compileApp => @previewApp -> notify 'Success!'
 
+    @barAutoCompile = new KDMultipleChoice
+      labels        : ['Auto', 'Manual']
+      defaultValue  : if @autoCompile then 'Auto' else 'Manual'
+      callback      : (state) =>
+        if not @options.targetApp.manifest?
+          notify 'No App Loaded, Please Load App First'
+          #This blows up Koding, not sure why.
+          #@barAutoCompile.setValue if state is 'Auto' then 'Manual' else 'Auto'
+          return
+
+        @autoCompile = if state is 'Auto' then true  else false
+        if @autoCompile and not @watching
+          notify 'Starting watch..'
+          @watchCompile()
+          
+
     barSplit = new KDSplitView
       type      : 'vertical'
       resizable : false
-      sizes     : ['30%', '40%', '30%']
-      views     : [barHeader, appSplit, barCompileBtn]
+      sizes     : ['30%', '40%', '15%', '15%']
+      views     : [barHeader, appSplit, @barAutoCompile, barCompileBtn]
 
     @previewView = new KDView()
     # Our CSS DOM Object is used to inject loaded css into our preview.
@@ -100,6 +123,59 @@ class AppAid.Views.MainView extends KDView
     # And finally, add our placeholder view.
     @previewView.addSubView new AppAid.Views.PreviewDefault()
 
+
+
+  # ### Watch Compile
+  #
+  watchCompile: ->
+    {
+      appName
+      vmName
+    } = @options.targetApp
+    thisAppPath = @options.manifest.path
+
+    errBail = (err) ->
+      notify "Error: #{err.message}"
+      @barAutoCompile.setValue 'Manual'
+
+    if @waching then return
+    @watching = true
+    
+    console.log 'Executing watch..'
+    KD.singletons.vmController.run
+      vmName    : vmName
+      withArgs  : "#{thisAppPath}/bin/watch.js ~/Applications/#{appName}"
+      (err, res) =>
+        if err? then return errBail err
+        @watching = false
+
+        coFiles = /\.coffee/.test res
+        cssFiles = /\.css/.test res
+        console.log('Watch returned!', coFiles, cssFiles, res)
+        console.log('autoCompile:', @autoCompile)
+
+        if not @autoCompile then return
+
+        checkPreviewApp = =>
+          console.log 'check preview'
+          if not coFiles then return @watchCompile()
+          @previewApp (err) =>
+            if err? then return errBail err
+            @watchCompile()
+
+        checkPreviewCss = =>
+          console.log 'check css'
+          if not cssFiles then return checkPreviewApp()
+          @previewCss (err) ->
+            if err? then return errBail err
+            checkPreviewApp()
+
+        do checkCompileApp = =>
+          console.log 'check compile'
+          if not coFiles then return checkPreviewCss()
+          @compileApp (err) ->
+            if err? then return errBail err
+            checkPreviewCss()
 
 
 
@@ -181,6 +257,8 @@ class AppAid.Views.MainView extends KDView
       # this may be a bit unsafe, but it should be this clients
       # code anyway.
       eval res
+
+      callback null
 
   # ### Preview CSS
   #
