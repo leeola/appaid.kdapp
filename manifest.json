@@ -1,5 +1,6 @@
 {
   "name": "AppAid",
+  "version": "0.0.1",
   "category": "develop",
   "devMode": true,
   "experimental": true,
@@ -12,7 +13,6 @@
   "multiple": false,
   "background": false,
   "hiddenHandle": false,
-  "version": "0.1",
   "identifier": "com.koding.apps.appaid",
   "behavior": "application",
   "source": {
