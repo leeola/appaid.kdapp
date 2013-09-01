@@ -134,9 +134,10 @@ class AppAid.Views.MainView extends KDView
     } = @options.targetApp
     thisAppPath = @options.manifest.path
 
-    errBail = (err) ->
+    errBail = (err) =>
       notify "Error: #{err.message}"
       @barAutoCompile.setValue 'Manual'
+      @autoCompile = false
 
     if @waching then return
     @watching = true
@@ -146,8 +147,8 @@ class AppAid.Views.MainView extends KDView
       vmName    : vmName
       withArgs  : "#{thisAppPath}/bin/watch.js ~/Applications/#{appName}"
       (err, res) =>
-        if err? then return errBail err
         @watching = false
+        if err? then return errBail err
 
         coFiles = /\.coffee/.test res
         cssFiles = /\.css/.test res

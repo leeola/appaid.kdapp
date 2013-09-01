@@ -12,18 +12,21 @@ var fs = require('fs')
 if (process.argv.length <= 2) throw new Error('Directory is required')
 
 var changedFiles  = []
-  , watcher       = null
+  , watchers      = []
   , targetAppDir  = process.argv[2]
+  , watchThrottle = 3000
+  , pastThrottle  = false
   , watchTimeout  = 30000
+  , timeoutId     = null
   , manifest      = JSON.parse(fs.readFileSync(targetAppDir +'/manifest.json'))
   , watchedFiles  = []
 
 
 findFiles = function(object) {
   if (object instanceof Array) {
-    for (var i=0; i < object.length; i++) {
-      watchedFiles.push(path.normalize(object[i]))
-    }
+    object.forEach(function(file) {
+      watchedFiles.push(path.resolve(targetAppDir, file))
+    })
   } else {
     for (key in object) {
       findFiles(object[key])
@@ -32,19 +35,41 @@ findFiles = function(object) {
 }
 findFiles(manifest.source)
 
-watcher = fs.watch(targetAppDir, function(event, filename) {
-  // Ignore non-change events.
-  if (event != 'change') return
-  
-  // Ignore non-watched files.
-  if (watchedFiles.indexOf(filename) == -1) return
-  if (changedFiles.indexOf(filename) >= 0) return
-  
-  changedFiles.push(filename)
+watchedFiles.forEach(function(watchFile) {
+  watchers.push(fs.watch(watchFile, function(event, filename) {
+    // Ignore non-change events.
+    // Note that we allow "rename" for Vim support, which is caused by
+    // the swapping.. i assume.
+    if (event != 'change' && event != 'rename') return
+    
+    // Ignore non-watched files.
+    //if (watchedFiles.indexOf(filename) == -1) return
+    //if (changedFiles.indexOf(filename) >= 0) return
+    
+    changedFiles.push(filename)
+
+    if (pastThrottle) {
+      clearTimeout(timeoutId)
+      watchers.forEach(function(watcher) {
+        watcher.close()
+      })
+      console.log(changedFiles.join(','))
+    }
+  }))
 })
 
-// Lastly, add a timeout so we can end this.
+// Set up a throttle timeout, which ensures we don't end too fast..
+// in the future we may handle this in the client.
 setTimeout(function() {
-  watcher.close()
+  pastThrottle = true
+}, watchThrottle)
+
+// Lastly, add a timeout so we can end this.
+timeoutId = setTimeout(function() {
+  watchers.forEach(function(watcher) {
+    watcher.close()
+  })
   console.log(changedFiles.join(','))
 }, watchTimeout)
+
+

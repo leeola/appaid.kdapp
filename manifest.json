@@ -27,7 +27,6 @@
       }
     },
     "stylesheets": [
-      "./resources/style.css"
     ]
   },
   "options": {
