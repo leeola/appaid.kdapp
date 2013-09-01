@@ -2,6 +2,7 @@
   "name": "AppAid",
   "category": "develop",
   "devMode": true,
+  "experimental": true,
   "path": "~/Applications/appaid.kdapp",
   "homepage": "leeolayvar.kd.io/appaid",
   "author": "Lee Olayvar",

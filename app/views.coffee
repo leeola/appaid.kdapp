@@ -87,6 +87,9 @@ class AppAid.Views.MainView extends KDView
       views     : [barHeader, appSplit, barCompileBtn]
 
     @previewView = new KDView()
+    # Our CSS DOM Object is used to inject loaded css into our preview.
+    @appCssStyle = $ "<style scoped></style>"
+    @previewView.domElement.prepend @appCssStyle
 
     @addSubView new KDSplitView
       type      : 'horizontal'
@@ -124,17 +127,31 @@ class AppAid.Views.MainView extends KDView
       vmName
     } = @options.targetApp
     notify "Loading '#{appName}'..."
+    
+    appHelperDir = "[#{vmName}]~/Applications/#{appName}"
+    @options.targetApp.helperDir = appHelperDir
 
-    @appIndexHelper = FSHelper.createFileFromPath(
-      "[#{vmName}]~/Applications/#{appName}/index.js"
-    )
-    @appIndexHelper.exists (err, exists) =>
-      if exists
-        @previewApp callback
-      else
-        @compileApp (err) =>
-          if err? then return callback err
-          @previewApp callback
+    appManifestHelper = FSHelper.createFileFromPath(
+      "#{appHelperDir}/manifest.json")
+    appManifestHelper.fetchContents (err, res) =>
+      if err? then return callback err
+      try
+        @options.targetApp.manifest = JSON.parse res
+      catch err
+        return callback err
+
+      @appIndexHelper = FSHelper.createFileFromPath "#{appHelperDir}/index.js"
+      @appIndexHelper.exists (err, exists) =>
+        if exists
+          @previewCss (err) =>
+            if err? then return callback err
+            @previewApp callback
+        else
+          @compileApp (err) =>
+            if err? then return callback err
+            @previewCss (err) =>
+              if err? then return callback err
+              @previewApp callback
 
 
   # ### Preview App
@@ -164,6 +181,36 @@ class AppAid.Views.MainView extends KDView
       # this may be a bit unsafe, but it should be this clients
       # code anyway.
       eval res
+
+  # ### Preview CSS
+  #
+  previewCss: (callback=->) ->
+    {
+      appName
+      vmName
+      helperDir
+    } = @options.targetApp
+    {stylesheets} = @options.targetApp.manifest.source
+    notify 'Previewing CSS...'
+
+    if not stylesheets? or stylesheets.length is 0 then return callback null
+
+    concatedCss = ''
+    do concatCss = (index=0) =>
+      stylesheet = stylesheets[index]
+
+      if not stylesheet?
+        @appCssStyle.html concatedCss
+        return callback null
+
+      stylesheetPath = "#{helperDir}/#{stylesheet}"
+      stylesheetHelper = FSHelper.createFileFromPath stylesheetPath
+      stylesheetHelper.fetchContents (err, res) ->
+        if err? then return callback err
+        concatedCss += res
+        concatCss ++index
+      
+    
 
 
 
