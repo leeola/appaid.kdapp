@@ -7,7 +7,7 @@ app faster.
 It does this by embedding another app into itself, and watching your file
 system for changes *(if you enable auto)*.
 
-# Installation
+## Installation
 
 Currently you need to clone this library. There will be a video on installation,
 but for now follow the steps below:
@@ -21,28 +21,28 @@ it before you run it :)
   click it.
 4. Open the app!
 
-# Usage
+## Usage
 
 Select your app from the app list, click **Load App**, and your app will load
 into the app region.
 
-## Manual Compiling
+### Manual Compiling
 
 To compile and reload your app manually, simply click **Compile and Preview**.
 
-## Automatic Compiling
+### Automatic Compiling
 
 Simply toggle **Auto** on. A process will launch on the server, and monitor
 all of the files you have specified in your apps manifest.
 
-# Future
+## Future
 
-## v0.1.0
+### v0.1.0
 
 0.1.0 is what you see here now. The focus will be easy compiling, auto
 compiling, and app usage. I may also include multi-VM workflow soon as well.
 
-## v0.2.0
+### v0.2.0
 
 0.2.0 will focus on unit testing.
 
