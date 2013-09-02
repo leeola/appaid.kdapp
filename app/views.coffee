@@ -63,9 +63,26 @@ class AppAid.Views.MainView extends KDView
       title     : 'Load App'
       callback  : =>
         @options.targetApp.appName = appSelectBox.getValue()
-        @loadApp (err) ->
+        @loadApp (err) =>
           if err?
-            notify "Error during Load: #{err.message}"
+            # Remove the manifest so that other buttons know it didn't load
+            # fully or properly.
+            @options.targetApp.manifest = null
+            if err.message is 'exit status 34'
+              err.message = 'Source files are missing from selected app'
+            new KDModalView
+              title     : "Error during Load: #{err.name}"
+              width     : 700 # Pixels
+              content   :
+                """
+                <div class="modalformline">
+                <p>
+                  There has been an error compiling #{appName}.
+                </p>
+                <pre>#{err.message}</pre>
+                <pre>#{err.stack}</pre>
+                </div>
+                """
 
     @appAutoCompile = new KDMultipleChoice
       labels        : ['Auto', 'Manual']
@@ -85,7 +102,28 @@ class AppAid.Views.MainView extends KDView
     appCompileBtn = new KDButtonView
       title     : 'Compile and Preview'
       callback  : =>
-        @compileApp => @previewCss => @previewApp -> notify 'Success!'
+        if not @options.targetApp.manifest?
+          notify 'No App Loaded, Please Load App First'
+          return
+        bailErr = (err) ->
+          new KDModalView
+            title     : "Error during Load: #{err.name}"
+            width     : 700 # Pixels
+            content   :
+              """
+              <div class="modalformline">
+              <p>
+                There has been an error compiling #{appName}.
+              </p>
+              <pre>#{err.message}</pre>
+              <pre>#{err.stack}</pre>
+              </div>
+              """
+
+        @compileApp (err) =>
+          if err? then bailErr(err) else @previewCss (err) =>
+            if err? then bailErr(err) else @previewApp ->
+              notify 'Success!'
         
     appBtns = new KDView
       cssClass  : 'appaid-btns'
@@ -271,7 +309,7 @@ class AppAid.Views.MainView extends KDView
             """
             <div class="modalformline">
             <p>
-              There has been an error compiling #{appName}.
+              There has been a runtime error of #{appName}.
             </p>
             <pre>#{e.message}</pre>
             <pre>#{e.stack}</pre>
