@@ -39,7 +39,6 @@ class AppAid.Views.MainView extends KDView
     @autoCompile = false
 
 
-
     # #### App Split Section
     # Our app split section defines the views for the app selection splitview.
     appSelectBox = new KDSelectBox
@@ -191,6 +190,7 @@ class AppAid.Views.MainView extends KDView
       vmName
     } = @options.targetApp
     notify "Compiling '#{appName}'..."
+    console.log "Compiling '#{appName}'..."
 
     KD.singletons.vmController.run
       vmName    : vmName
@@ -207,6 +207,7 @@ class AppAid.Views.MainView extends KDView
       vmName
     } = @options.targetApp
     notify "Loading '#{appName}'..."
+    console.log "Loading '#{appName}'..."
     
     appHelperDir = "[#{vmName}]~/Applications/#{appName}"
     @options.targetApp.helperDir = appHelperDir
@@ -241,7 +242,8 @@ class AppAid.Views.MainView extends KDView
       appName
       vmName
     } = @options.targetApp
-    notify "Previewing '#{appName}'..."
+    manifestAppName = @options.targetApp.manifest.name
+    console.log "Previewing '#{appName}'..."
 
     # Let the hacks begin.
     if appView?.id isnt @previewView.id
@@ -251,16 +253,30 @@ class AppAid.Views.MainView extends KDView
     
     @appIndexHelper.fetchContents (err, res) =>
       if err? then return callback err
-      console.log 'Fetched! '+ res?.length
 
       # By destroying the subviews, we ensure (or try to) that the newly
       # compiled code is applied to a fresh view.
       @previewView.destroySubViews()
-      
+        
       # We're just using a simple eval on the loaded JS code, 
       # this may be a bit unsafe, but it should be this clients
       # code anyway.
-      eval res
+      try
+        eval res
+      catch e
+        new KDModalView
+          title     : "#{manifestAppName} Error: #{e.name}"
+          width     : 700 # Pixels
+          content   :
+            """
+            <div class="modalformline">
+            <p>
+              There has been an error compiling #{appName}.
+            </p>
+            <pre>#{e.message}</pre>
+            <pre>#{e.stack}</pre>
+            </div>
+            """
 
       callback null
 
@@ -273,7 +289,7 @@ class AppAid.Views.MainView extends KDView
       helperDir
     } = @options.targetApp
     {stylesheets} = @options.targetApp.manifest.source
-    notify 'Previewing CSS...'
+    console.log 'Previewing CSS...'
 
     if not stylesheets? or stylesheets.length is 0 then return callback null
 
