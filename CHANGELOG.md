@@ -1,5 +1,8 @@
 # 0.1.2 / 
 
+- Corrected installation steps in readme.
+- Added a more helpful default preview message.
+
 # 0.1.1-1 / 2013-09-02
 
 - Fixed a couple missing variables that drunk-lee introduced. It's mostly

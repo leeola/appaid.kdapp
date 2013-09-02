@@ -360,9 +360,14 @@ class AppAid.Views.PreviewDefault extends JView
 
   pistachio: ->
     """
-    <h1 style="font-size: 90px; text-align: center; margin-top: 80px;">
-      Load your App
-    </h1>
+    <div style="text-align: center; margin-top: 80px;">
+      <h1 style="font-size: 90px; margin: 20px 0;">
+        Load Your App
+      </h1>
+      <p style="font-size: 25px;">
+        Select your app from the list above, then click Load.
+      </p>
+    </div>
     """
 
 
