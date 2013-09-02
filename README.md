@@ -15,9 +15,11 @@ and then click Refresh in your Develop Tab. After this, make sure to compile
 it before you run it :)
 
 1. Clone this repo with
-`git clone https://github.com/leeolayvar/appaid.kdapp.git ~/Applications/appaid.kdapp`
+  `git clone https://github.com/leeolayvar/appaid.kdapp.git ~/Applications/appaid.kdapp`
 2. Refresh your App List
-3. Open the app! It should auto compile and launch.
+3. In the upper right of the App Icon, there should be a compile button,
+  click it.
+4. Open the app!
 
 # Usage
 
