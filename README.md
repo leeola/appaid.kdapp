@@ -11,8 +11,6 @@ system for changes *(if you enable auto)*.
 
 Currently you need to clone this library. There will be a video on installation,
 but for now follow the steps below:
-and then click Refresh in your Develop Tab. After this, make sure to compile
-it before you run it :)
 
 1. Clone this repo with
   `git clone https://github.com/leeolayvar/appaid.kdapp.git ~/Applications/appaid.kdapp`
