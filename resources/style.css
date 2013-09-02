@@ -22,3 +22,11 @@
   text-indent: 0;
   line-height: 24px;
 }
+
+/* The KDF is causing a weird overflow on any resize of the viewport.
+ * this is in place to stop that.. it's a hack, but i can't figure out
+ * the real cause.. so this fixes it.
+ */
+.appaid > .kdsplitview-horizontal > .panel-0 {
+  overflow: hidden;
+}

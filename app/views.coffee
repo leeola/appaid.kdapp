@@ -117,7 +117,7 @@ class AppAid.Views.MainView extends KDView
     @addSubView new KDSplitView
       type      : 'horizontal'
       resizable : false
-      sizes     : ['38px', '90%']
+      sizes     : ['40px', '100%']
       views     : [barSplit, @previewView]
 
     # And finally, add our placeholder view.
