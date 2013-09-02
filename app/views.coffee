@@ -62,7 +62,7 @@ class AppAid.Views.MainView extends KDView
     appLoadBtn = new KDButtonView
       title     : 'Load App'
       callback  : =>
-        @options.targetApp.appName = appSelectBox.getValue()
+        appName = @options.targetApp.appName = appSelectBox.getValue()
         @loadApp (err) =>
           if err?
             # Remove the manifest so that other buttons know it didn't load
@@ -105,9 +105,10 @@ class AppAid.Views.MainView extends KDView
         if not @options.targetApp.manifest?
           notify 'No App Loaded, Please Load App First'
           return
+        {appName} = @options.targetApp
         bailErr = (err) ->
           new KDModalView
-            title     : "Error during Load: #{err.name}"
+            title     : "Error during Compile: #{err.name}"
             width     : 700 # Pixels
             content   :
               """
