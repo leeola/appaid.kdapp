@@ -1,4 +1,4 @@
-# 0.1.1 /
+# 0.1.1 / 2013-09-02
 
 - KDC returns an `ExitStatus: 34` if it is used to compile an application with
   missing source definitions. This will actually be a pretty common error due
