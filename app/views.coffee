@@ -11,7 +11,7 @@
 #
 class AppAid.Views.MainView extends KDView
   constructor: (@options={})->
-    @options.cssClass ?= "appaid-mainview"
+    @options.cssClass ?= "appaid"
     @options.vmName ?= KD.singletons.vmController.defaultVmName
 
     # We used to use `KD.singletons.appManager.getFrontAppManifest()` to get
@@ -67,27 +67,8 @@ class AppAid.Views.MainView extends KDView
         @loadApp (err) ->
           if err?
             notify "Error during Load: #{err.message}"
-        
 
-    appSplit = new KDSplitView
-      type      : 'vertical'
-      resizable : false
-      sizes     : ['50%', '50%']
-      views     : [appSelectBox, appLoadBtn]
-
-    
-    # #### Bar Split Section
-    # The bar is the top bar split thing.
-    barHeader = new KDHeaderView
-      title     : @options.manifest.description
-      type      : 'medium'
-
-    barCompileBtn = new KDButtonView
-      title     : 'Compile and Preview'
-      callback  : =>
-        @compileApp => @previewApp -> notify 'Success!'
-
-    @barAutoCompile = new KDMultipleChoice
+    @appAutoCompile = new KDMultipleChoice
       labels        : ['Auto', 'Manual']
       defaultValue  : if @autoCompile then 'Auto' else 'Manual'
       callback      : (state) =>
@@ -101,13 +82,33 @@ class AppAid.Views.MainView extends KDView
         if @autoCompile and not @watching
           notify 'Starting watch..'
           @watchCompile()
-          
+
+    appCompileBtn = new KDButtonView
+      title     : 'Compile and Preview'
+      callback  : =>
+        @compileApp => @previewCss => @previewApp -> notify 'Success!'
+        
+    appBtns = new KDView
+      cssClass  : 'appaid-btns'
+    # Due to the float, these are ordered backwards.
+    appBtns.addSubView appCompileBtn
+    appBtns.addSubView @appAutoCompile
+    appBtns.addSubView appLoadBtn
+    appBtns.addSubView appSelectBox
+
+
+    # #### Bar Split Section
+    # The bar is the top bar split thing.
+    barHeader = new KDHeaderView
+      title     : @options.manifest.description
+      type      : 'medium'
 
     barSplit = new KDSplitView
+      cssClass  : 'appaid-bar inner-header'
       type      : 'vertical'
       resizable : false
-      sizes     : ['30%', '40%', '15%', '15%']
-      views     : [barHeader, appSplit, @barAutoCompile, barCompileBtn]
+      sizes     : ['40%', '60%']
+      views     : [barHeader, appBtns]
 
     @previewView = new KDView()
     # Our CSS DOM Object is used to inject loaded css into our preview.
@@ -117,7 +118,7 @@ class AppAid.Views.MainView extends KDView
     @addSubView new KDSplitView
       type      : 'horizontal'
       resizable : false
-      sizes     : ['40px', '90%']
+      sizes     : ['38px', '90%']
       views     : [barSplit, @previewView]
 
     # And finally, add our placeholder view.
@@ -136,7 +137,7 @@ class AppAid.Views.MainView extends KDView
 
     errBail = (err) =>
       notify "Error: #{err.message}"
-      @barAutoCompile.setValue 'Manual'
+      @appAutoCompile.setValue 'Manual'
       @autoCompile = false
 
     if @waching then return

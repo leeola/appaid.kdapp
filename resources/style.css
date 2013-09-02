@@ -1,0 +1,24 @@
+
+.appaid .appaid-bar {
+}
+.appaid .appaid-btns {
+}
+.appaid .appaid-btns > button,
+.appaid .appaid-btns > div {
+  float: right;
+  margin: 6px 12px 0 0;
+}
+.appaid .appaid-bar .kdheaderview {
+  border-bottom: 0px;
+}
+
+/* The following fixes a .inner-header related issue */
+.appaid .appaid-btns > button {
+  top: 0;
+}
+.appaid .appaid-bar.inner-header .title {
+  font-size: 11px;
+  font-weight: normal;
+  text-indent: 0;
+  line-height: 24px;
+}
