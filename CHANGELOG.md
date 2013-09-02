@@ -1,4 +1,4 @@
-# 0.1.2 / 
+# 0.1.2 / 2013-09-02
 
 - Corrected installation steps in readme.
 - Added a more helpful default preview message.
