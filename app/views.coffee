@@ -31,6 +31,9 @@ class AppAid.Views.MainView extends KDView
     # Soon we'll offer targetted VMs, but for now default it.
     @options.targetApp.vmName = @options.vmName
 
+    # Check if the vm-side requirements are installed for the VM
+    #@installationReqsCheck prompt: true
+
 
     # Autocompile States.
     # @watching means that the process is currently running.
@@ -163,63 +166,6 @@ class AppAid.Views.MainView extends KDView
 
 
 
-  # ### Watch Compile
-  #
-  watchCompile: ->
-    {
-      appName
-      vmName
-    } = @options.targetApp
-    thisAppPath = @options.manifest.path
-
-    errBail = (err) =>
-      notify "Error: #{err.message}"
-      @appAutoCompile.setValue 'Manual'
-      @autoCompile = false
-
-    if @waching then return
-    @watching = true
-    
-    console.log 'Executing watch..'
-    KD.singletons.vmController.run
-      vmName    : vmName
-      withArgs  : "#{thisAppPath}/bin/watch.js ~/Applications/#{appName}"
-      (err, res) =>
-        @watching = false
-        if err? then return errBail err
-
-        coFiles = /\.coffee/.test res
-        cssFiles = /\.css/.test res
-        console.log('Watch returned!', coFiles, cssFiles, res)
-
-        if not KD.singletons.appManager.get(@options.manifest.name)?
-          console.log 'Watch returned, but app is closed. Exiting.'
-          return
-        if not @autoCompile then return
-
-        checkPreviewApp = =>
-          console.log 'check preview'
-          if not coFiles then return @watchCompile()
-          @previewApp (err) =>
-            if err? then return errBail err
-            @watchCompile()
-
-        checkPreviewCss = =>
-          console.log 'check css'
-          if not cssFiles then return checkPreviewApp()
-          @previewCss (err) ->
-            if err? then return errBail err
-            checkPreviewApp()
-
-        do checkCompileApp = =>
-          console.log 'check compile'
-          if not coFiles then return checkPreviewCss()
-          @compileApp (err) ->
-            if err? then return errBail err
-            checkPreviewCss()
-
-
-
   # ### Compile App
   #
   compileApp: (callback=->) ->
@@ -236,6 +182,31 @@ class AppAid.Views.MainView extends KDView
       (err, res) ->
         # Currently ignoring the response of kdc.
         callback err
+
+
+
+  # ### Installation Requirements Check
+  #
+  # Check if the requirements for the targetVM are installed, and install
+  # them if they are not.
+  #
+  installationReqsCheck: (options={}, callback=->) ->
+    if options instanceof Function
+      callback = options
+      options = {}
+    options.prompt ?= true
+
+    # #### Grab our working vars from the manifest and options.
+
+    # Our installation path is the path the app would be installed to, 
+    # even if the app doesn't exist on that VM.
+    installationPath    = @options.manifest.path
+    {vmName}            = @options.targetApp
+
+
+    
+
+
 
   # ### Load App
   #
@@ -345,6 +316,63 @@ class AppAid.Views.MainView extends KDView
         if err? then return callback err
         concatedCss += res
         concatCss ++index
+
+
+
+  # ### Watch Compile
+  #
+  watchCompile: ->
+    {
+      appName
+      vmName
+    } = @options.targetApp
+    thisAppPath = @options.manifest.path
+
+    errBail = (err) =>
+      notify "Error: #{err.message}"
+      @appAutoCompile.setValue 'Manual'
+      @autoCompile = false
+
+    if @waching then return
+    @watching = true
+    
+    console.log 'Executing watch..'
+    KD.singletons.vmController.run
+      vmName    : vmName
+      withArgs  : "#{thisAppPath}/bin/watch.js ~/Applications/#{appName}"
+      (err, res) =>
+        @watching = false
+        if err? then return errBail err
+
+        coFiles = /\.coffee/.test res
+        cssFiles = /\.css/.test res
+        console.log('Watch returned!', coFiles, cssFiles, res)
+
+        if not KD.singletons.appManager.get(@options.manifest.name)?
+          console.log 'Watch returned, but app is closed. Exiting.'
+          return
+        if not @autoCompile then return
+
+        checkPreviewApp = =>
+          console.log 'check preview'
+          if not coFiles then return @watchCompile()
+          @previewApp (err) =>
+            if err? then return errBail err
+            @watchCompile()
+
+        checkPreviewCss = =>
+          console.log 'check css'
+          if not cssFiles then return checkPreviewApp()
+          @previewCss (err) ->
+            if err? then return errBail err
+            checkPreviewApp()
+
+        do checkCompileApp = =>
+          console.log 'check compile'
+          if not coFiles then return checkPreviewCss()
+          @compileApp (err) ->
+            if err? then return errBail err
+            checkPreviewCss()
       
     
 
@@ -363,5 +391,14 @@ class AppAid.Views.PreviewDefault extends JView
       Load your App
     </h1>
     """
+
+
+# ## Installer Modal
+#
+# This modal view is presented for each VM that is found to not have the
+# requirements installed.
+class AppAid.Views.InstallerModal extends KDModalView
+  constructor: -> super
+
 
 
