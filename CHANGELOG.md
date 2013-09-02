@@ -1,5 +1,10 @@
 # 0.1.2 / 
 
+# 0.1.1-1 / 2013-09-02
+
+- Fixed a couple missing variables that drunk-lee introduced. It's mostly
+  just a patch until [this](/leeolayvar/appaid.kdapp/issues/2) is implemented.
+
 # 0.1.1 / 2013-09-02
 
 - KDC returns an `ExitStatus: 34` if it is used to compile an application with
