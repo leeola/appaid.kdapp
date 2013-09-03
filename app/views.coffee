@@ -41,6 +41,16 @@ class AppAid.Views.MainView extends KDView
 
     # #### App Split Section
     # Our app split section defines the views for the app selection splitview.
+    appClearBtn = new KDButtonView
+      title     : 'Clear App'
+      callback  : =>
+        console.log 'Clearing App'
+        @previewView.destroySubViews()
+        @appCssStyle.html ''
+        @previewView.addSubView @defaultPreview
+        notify 'App Cleared.'
+
+
     appSelectBox = new KDSelectBox
       label: new KDLabelView
         title: 'App:'
@@ -133,6 +143,7 @@ class AppAid.Views.MainView extends KDView
     appBtns.addSubView @appAutoCompile
     appBtns.addSubView appLoadBtn
     appBtns.addSubView appSelectBox
+    appBtns.addSubView appClearBtn
 
 
     # #### Bar Split Section
@@ -160,7 +171,8 @@ class AppAid.Views.MainView extends KDView
       views     : [barSplit, @previewView]
 
     # And finally, add our placeholder view.
-    @previewView.addSubView new AppAid.Views.PreviewDefault()
+    @defaultPreview = new AppAid.Views.PreviewDefault()
+    @previewView.addSubView @defaultPreview
 
 
 

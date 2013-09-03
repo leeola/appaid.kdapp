@@ -1,5 +1,7 @@
 # 0.1.3 / 
 
+- [#5](issues/5): A clear app button has been added.
+
 # 0.1.2 / 2013-09-02
 
 - Corrected installation steps in readme.
