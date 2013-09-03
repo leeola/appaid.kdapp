@@ -1,5 +1,7 @@
 # 0.1.4 / 
 
+- Added Ctrl-Enter FullWindow support.
+
 # 0.1.3 / 2013-09-03
 
 - [#5](https://github.com/leeolayvar/appaid.kdapp/issues/5):
