@@ -1,6 +1,9 @@
 # 0.1.3 / 
 
-- [#5](issues/5): A clear app button has been added.
+- [#5](https://github.com/leeolayvar/appaid.kdapp/issues/5):
+  A clear app button has been added.
+- [#6](https://github.com/leeolayvar/appaid.kdapp/issues/6):
+  Compile failures now give sane responses no matter what the exit code.
 
 # 0.1.2 / 2013-09-02
 

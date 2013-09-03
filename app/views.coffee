@@ -78,8 +78,6 @@ class AppAid.Views.MainView extends KDView
             # Remove the manifest so that other buttons know it didn't load
             # fully or properly.
             @options.targetApp.manifest = null
-            if err.message is 'exit status 34'
-              err.message = 'Source files are missing from selected app'
             new KDModalView
               title     : "Error during Load: #{err.name}"
               width     : 700 # Pixels
@@ -247,7 +245,14 @@ class AppAid.Views.MainView extends KDView
       vmName    : vmName
       withArgs  : "kdc ~/Applications/#{appName}"
       (err, res) ->
-        # Currently ignoring the response of kdc.
+        # Errors from KDC are handled oddly. The error object is the return
+        # code from the process, and the response is the actual error
+        # message. With this information, we want to change our error
+        # object to be more informative.
+        err.stack = res
+        # Note that the following line is very hacky. We may want to improve
+        # this .. or at least make this more robust.
+        [err.name, err.message] = res.split('\n')[0].split ': '
         callback err
 
   # ### Load App
