@@ -1,4 +1,4 @@
-# 0.1.3 / 
+# 0.1.3 / 2013-09-03
 
 - [#5](https://github.com/leeolayvar/appaid.kdapp/issues/5):
   A clear app button has been added.
