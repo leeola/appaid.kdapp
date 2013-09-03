@@ -4,6 +4,8 @@
   A clear app button has been added.
 - [#6](https://github.com/leeolayvar/appaid.kdapp/issues/6):
   Compile failures now give sane responses no matter what the exit code.
+- [Related #7](https://github.com/leeolayvar/appaid.kdapp/issues/7):
+  Added better notifications for the whole compile process.
 
 # 0.1.2 / 2013-09-02
 

@@ -132,7 +132,7 @@ class AppAid.Views.MainView extends KDView
         @compileApp (err) =>
           if err? then bailErr(err) else @previewCss (err) =>
             if err? then bailErr(err) else @previewApp ->
-              notify 'Success!'
+              notify 'Success!', type: 'tray'
         
     appBtns = new KDView
       cssClass  : 'appaid-btns'
@@ -208,6 +208,13 @@ class AppAid.Views.MainView extends KDView
           return
         if not @autoCompile then return
 
+        if coFiles or cssFiles
+          notify "Change detected",
+            type: 'tray'
+            duration: 4000
+            closeManually: true
+
+
         checkPreviewApp = =>
           console.log 'check preview'
           if not coFiles then return @watchCompile()
@@ -238,22 +245,30 @@ class AppAid.Views.MainView extends KDView
       appName
       vmName
     } = @options.targetApp
-    notify "Compiling '#{appName}'..."
-    console.log "Compiling '#{appName}'..."
+    note = notify "Compiling '#{appName}'...",
+      type          : 'tray'
+      duration      : 60000
+      closeManually : false
 
     KD.singletons.vmController.run
       vmName    : vmName
       withArgs  : "kdc ~/Applications/#{appName}"
       (err, res) ->
-        # Errors from KDC are handled oddly. The error object is the return
-        # code from the process, and the response is the actual error
-        # message. With this information, we want to change our error
-        # object to be more informative.
-        err.stack = res
-        # Note that the following line is very hacky. We may want to improve
-        # this .. or at least make this more robust.
-        [err.name, err.message] = res.split('\n')[0].split ': '
-        callback err
+        note.destroy()
+        if err?
+          # Errors from KDC are handled oddly. The error object is the return
+          # code from the process, and the response is the actual error
+          # message. With this information, we want to change our error
+          # object to be more informative.
+          err.stack = res
+          # Note that the following line is very hacky. We may want to improve
+          # this .. or at least make this more robust.
+          [err.name, err.message] = res.split('\n')[0].split ': '
+          callback err
+
+        notify "Compile completed", type: 'tray'
+        # No need to return the success response.
+        callback null
 
   # ### Load App
   #
@@ -262,20 +277,25 @@ class AppAid.Views.MainView extends KDView
       appName
       vmName
     } = @options.targetApp
-    notify "Loading '#{appName}'..."
-    console.log "Loading '#{appName}'..."
-    
+    note = notify "Loading '#{appName}'...",
+      type          : 'tray'
+      duration      : 60000
+      closeManually : false
+
     appHelperDir = "[#{vmName}]~/Applications/#{appName}"
     @options.targetApp.helperDir = appHelperDir
 
     appManifestHelper = FSHelper.createFileFromPath(
       "#{appHelperDir}/manifest.json")
     appManifestHelper.fetchContents (err, res) =>
+      note.destroy()
       if err? then return callback err
       try
         @options.targetApp.manifest = JSON.parse res
       catch err
         return callback err
+
+      notify "Load completed", type: 'tray'
 
       @appIndexHelper = FSHelper.createFileFromPath "#{appHelperDir}/index.js"
       @appIndexHelper.exists (err, exists) =>
@@ -299,7 +319,10 @@ class AppAid.Views.MainView extends KDView
       vmName
     } = @options.targetApp
     manifestAppName = @options.targetApp.manifest.name
-    console.log "Previewing '#{appName}'..."
+    note = notify "Previewing '#{appName}'...",
+      type          : 'tray'
+      duration      : 60000
+      closeManually : false
 
     # Let the hacks begin.
     if appView?.id isnt @previewView.id
@@ -308,6 +331,7 @@ class AppAid.Views.MainView extends KDView
       appView = @previewView
     
     @appIndexHelper.fetchContents (err, res) =>
+      note.destroy()
       if err? then return callback err
 
       # By destroying the subviews, we ensure (or try to) that the newly
@@ -333,6 +357,8 @@ class AppAid.Views.MainView extends KDView
             <pre>#{e.stack}</pre>
             </div>
             """
+
+      notify "Preview completed", type: 'tray'
 
       callback null
 
