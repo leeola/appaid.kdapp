@@ -1,7 +1,11 @@
 # 0.1.4 / 
 
 - Added Ctrl-Enter FullWindow support.
-- Removed Header from the AppAid Bar
+- [#9](https://github.com/leeolayvar/appaid.kdapp/issues/9):
+  Removed Header from the AppAid Bar
+- [#11](https://github.com/leeolayvar/appaid.kdapp/issues/11):
+  Features that require a sub-app to be loaded are now hidden when an app
+  is not loaded.
 
 # 0.1.3 / 2013-09-03
 

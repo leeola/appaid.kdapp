@@ -48,6 +48,12 @@ class AppAid.Views.MainView extends KDView
         @previewView.destroySubViews()
         @appCssStyle.html ''
         @previewView.addSubView @defaultPreview
+
+        appClearBtn.hide()
+        @appAutoCompile.hide()
+        appCompileBtn.hide()
+        
+        @options.targetApp.appName = @options.targetApp.manifest = null
         notify 'App Cleared.'
 
 
@@ -91,17 +97,15 @@ class AppAid.Views.MainView extends KDView
                 <pre>#{err.stack}</pre>
                 </div>
                 """
+            return
+          appClearBtn.show()
+          @appAutoCompile.show()
+          appCompileBtn.show()
 
     @appAutoCompile = new KDMultipleChoice
       labels        : ['Auto', 'Manual']
       defaultValue  : if @autoCompile then 'Auto' else 'Manual'
       callback      : (state) =>
-        if not @options.targetApp.manifest?
-          notify 'No App Loaded, Please Load App First'
-          #This blows up Koding, not sure why.
-          #@barAutoCompile.setValue if state is 'Auto' then 'Manual' else 'Auto'
-          return
-
         @autoCompile = if state is 'Auto' then true  else false
         if @autoCompile and not @watching
           notify 'Starting watch..'
@@ -110,9 +114,6 @@ class AppAid.Views.MainView extends KDView
     appCompileBtn = new KDButtonView
       title     : 'Compile and Preview'
       callback  : =>
-        if not @options.targetApp.manifest?
-          notify 'No App Loaded, Please Load App First'
-          return
         {appName} = @options.targetApp
         bailErr = (err) ->
           new KDModalView
@@ -143,6 +144,10 @@ class AppAid.Views.MainView extends KDView
     appBtns.addSubView appSelectBox
     appBtns.addSubView appClearBtn
 
+    # Hide our loaded-only app buttons.
+    appClearBtn.hide()
+    appCompileBtn.hide()
+    @appAutoCompile.hide()
 
     # #### Bar Split Section
     # The bar is the top bar split thing.
