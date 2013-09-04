@@ -146,16 +146,14 @@ class AppAid.Views.MainView extends KDView
 
     # #### Bar Split Section
     # The bar is the top bar split thing.
-    barHeader = new KDHeaderView
-      title     : @options.manifest.description
-      type      : 'medium'
-
+    # Note that this is primarily legacy, but i am keeping it around incase
+    # i want to add more to the bar, outside of appBtns
     barSplit = new KDSplitView
       cssClass  : 'appaid-bar inner-header'
       type      : 'vertical'
       resizable : false
-      sizes     : ['40%', '60%']
-      views     : [barHeader, appBtns]
+      sizes     : ['100%']
+      views     : [appBtns]
 
     @previewView = new KDView()
     # Our CSS DOM Object is used to inject loaded css into our preview.

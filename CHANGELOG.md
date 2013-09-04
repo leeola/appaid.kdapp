@@ -1,6 +1,7 @@
 # 0.1.4 / 
 
 - Added Ctrl-Enter FullWindow support.
+- Removed Header from the AppAid Bar
 
 # 0.1.3 / 2013-09-03
 
