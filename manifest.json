@@ -1,19 +1,16 @@
 {
-  "name": "AppAid",
   "version": "0.1.4",
+  "name": "AppAid",
+  "description": "Make KDApp development faster and easier!",
+  "homepage": "https://github.com/leeolayvar/appaid.kdapp",
+  "repository": "git://github.com/leeolayvar/appaid.kdapp.git",
+  "author": "Lee Olayvar",
+  "authorNick": "leeolayvar",
   "category": "develop",
+  "path": "~/Applications/appaid.kdapp",
   "devMode": true,
   "experimental": true,
-  "path": "~/Applications/appaid.kdapp",
-  "homepage": "leeolayvar.kd.io/appaid",
-  "author": "Lee Olayvar",
-  "repository": "git://github.com/leeolayvar/appaid.kdapp.git",
-  "description": "Make KDApp development faster and easier!",
-  "authorNick": "leeolayvar",
   "multiple": false,
-  "background": false,
-  "hiddenHandle": false,
-  "identifier": "com.koding.apps.appaid",
   "behavior": "application",
   "source": {
     "blocks": {
@@ -32,9 +29,6 @@
   },
   "options": {
     "type": "tab"
-  },
-  "icns": {
-    "128": "./resources/icon.128.png"
   },
   "menu": []
 }
