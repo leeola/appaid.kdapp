@@ -6,6 +6,7 @@
 - [#11](https://github.com/leeolayvar/appaid.kdapp/issues/11):
   Features that require a sub-app to be loaded are now hidden when an app
   is not loaded.
+- Added a clone in Koding link.
 
 # 0.1.3 / 2013-09-03
 

@@ -1,6 +1,8 @@
 
 # AppAid
 
+[![Clone in Koding](http://kbutton.org/app.png)](http://kbutton.org/leeolayvar/appaid.kdapp)
+
 AppAid is a [Koding](https://koding.com) App designed to help you develop your
 app faster.
 
