@@ -23,3 +23,5 @@ do ->
     @options.targetApp.vmName,
     @
 
+  # If we're running appAid in AppAid, tell it we loaded. Meta!
+  if appAid? then appAid.loaded()

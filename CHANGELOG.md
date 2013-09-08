@@ -1,5 +1,7 @@
 # 0.2.0 /
 
+- Added Test Buttons
+
 # 0.1.4 / 
 
 - Added Ctrl-Enter FullWindow support.
