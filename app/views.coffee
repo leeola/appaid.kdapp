@@ -40,11 +40,28 @@ class AppAid.Views.MainView extends KDView
     
 
     # #### App Test View Definitions
+    testShow = new KDButtonView
+      title     : 'Show Tests'
+      callback  : =>
+        console.log 'Showing tests'
+    testShow.setClass 'float-left'
+
     testBtn = new KDButtonView
       title     : 'Run Tests'
       callback  : =>
         console.log 'Running tests'
     testBtn.setClass 'float-left'
+    testBtn.hide() # Note that we hide this for continuous toggle, not app load
+
+    @testContinuous = new KDMultipleChoice
+      labels        : ['Continuous', 'Manual']
+      defaultValue  : 'Continuous'
+      callback      : (state) =>
+        if state is 'Continuous'
+          testBtn.hide()
+        else
+          testBtn.show()
+    @testContinuous.setClass 'float-left'
 
 
     # #### App Split Section
@@ -111,6 +128,8 @@ class AppAid.Views.MainView extends KDView
           appClearBtn.show()
           @appAutoCompile.show()
           appCompileBtn.show()
+          @testContinuous.show()
+          testShow.show()
     appLoadBtn.setClass 'float-right'
 
     @appAutoCompile = new KDMultipleChoice
@@ -157,12 +176,16 @@ class AppAid.Views.MainView extends KDView
     barView.addSubView appSelectBox
     barView.addSubView appClearBtn
     # and now our tests
+    barView.addSubView testShow
+    barView.addSubView @testContinuous
     barView.addSubView testBtn
 
     # Hide our loaded-only app buttons.
     appClearBtn.hide()
     appCompileBtn.hide()
     @appAutoCompile.hide()
+    @testContinuous.hide()
+    testShow.hide()
 
     @previewView = new KDView()
     # Our CSS DOM Object is used to inject loaded css into our preview.
