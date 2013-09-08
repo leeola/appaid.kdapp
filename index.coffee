@@ -17,3 +17,9 @@ do ->
   # Our MainView instance, which is assigned in `./app/views.coffee`.
   mainView = new MainView()
   appView.addSubView mainView
+
+  # 
+  new AppAid.Views.InstallView @options.vmName,
+    @options.targetApp.vmName,
+    @
+

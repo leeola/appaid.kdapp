@@ -7,6 +7,15 @@
 
 
 
+
+# ## Install View
+#
+class AppAid.Views.InstallView extends KDView
+  constructor: (options={}) ->
+    super options
+
+
+
 # ## MainView
 #
 class AppAid.Views.MainView extends KDView
@@ -18,6 +27,7 @@ class AppAid.Views.MainView extends KDView
     # the manifest, but it seems during App Initialization that the "in front"
     # app is not entirely known. So, we're grabbing our app manifest manually.
     @options.manifest ?= KD.getAppOptions('AppAid')
+    @options.fsHelperPath = "[#{@options.vmName}]#{@options.manifest.path}"
 
     super @options
 
@@ -30,7 +40,6 @@ class AppAid.Views.MainView extends KDView
     @options.targetApp = {}
     # Soon we'll offer targetted VMs, but for now default it.
     @options.targetApp.vmName = @options.vmName
-
 
     # Autocompile States.
     # @watching means that the process is currently running.
@@ -174,6 +183,26 @@ class AppAid.Views.MainView extends KDView
     # And finally, add our placeholder view.
     @defaultPreview = new AppAid.Views.PreviewDefault()
     @previewView.addSubView @defaultPreview
+ 
+
+
+  # ### Check Installation
+  #
+  checkInstall: (vmName) ->
+    helperPath = "[#{vmName}]#{@options.manifest.path}"
+
+    FSHelper
+      .createFileFromPath("#{@options.fsHelperPath}/node_modules")
+      .exists (err, exists) =>
+        if err? then return notify err
+        if not exists
+          @hide()
+          @parent.addSubView new InstallView mainView:@
+
+
+  # ### Install
+  #
+  installAppAid: ->
 
 
 

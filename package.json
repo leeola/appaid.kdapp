@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "devDependencies": {
+    "mocha": "~1.12.1"
+  }
+}
