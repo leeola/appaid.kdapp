@@ -40,11 +40,20 @@ class AppAid.Views.MainView extends KDView
     
 
     # #### App Test View Definitions
-    testShow = new KDButtonView
-      title     : 'Show Tests'
-      callback  : =>
-        console.log 'Showing tests'
-    testShow.setClass 'float-left'
+    testShowTgl = new KDToggleButton
+      states: [
+        {
+          title     : 'Show Tests'
+          callback  : =>
+            testShowTgl.setState 'Hide Tests'
+        }
+        {
+          title     : 'Hide Tests'
+          callback  : =>
+            testShowTgl.setState 'Show Tests'
+        }
+      ]
+    testShowTgl.setClass 'float-left'
 
     testBtn = new KDButtonView
       title     : 'Run Tests'
@@ -129,7 +138,7 @@ class AppAid.Views.MainView extends KDView
           @appAutoCompile.show()
           appCompileBtn.show()
           @testContinuous.show()
-          testShow.show()
+          testShowTgl.show()
     appLoadBtn.setClass 'float-right'
 
     @appAutoCompile = new KDMultipleChoice
@@ -176,7 +185,7 @@ class AppAid.Views.MainView extends KDView
     barView.addSubView appSelectBox
     barView.addSubView appClearBtn
     # and now our tests
-    barView.addSubView testShow
+    barView.addSubView testShowTgl
     barView.addSubView @testContinuous
     barView.addSubView testBtn
 
@@ -185,7 +194,7 @@ class AppAid.Views.MainView extends KDView
     appCompileBtn.hide()
     @appAutoCompile.hide()
     @testContinuous.hide()
-    testShow.hide()
+    testShowTgl.hide()
 
     @previewView = new KDView()
     # Our CSS DOM Object is used to inject loaded css into our preview.
