@@ -17,3 +17,6 @@ do ->
   # Our MainView instance, which is assigned in `./app/views.coffee`.
   mainView = new MainView()
   appView.addSubView mainView
+
+  # If we're running appAid in AppAid, tell it we loaded. Meta!
+  if appAid? then appAid.loaded()

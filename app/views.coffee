@@ -37,6 +37,14 @@ class AppAid.Views.MainView extends KDView
     @watching = false
     # @autoCompile means that we want to auto compile.
     @autoCompile = false
+    
+
+    # #### App Test View Definitions
+    testBtn = new KDButtonView
+      title     : 'Run Tests'
+      callback  : =>
+        console.log 'Running tests'
+    testBtn.setClass 'float-left'
 
 
     # #### App Split Section
@@ -55,11 +63,13 @@ class AppAid.Views.MainView extends KDView
         
         @options.targetApp.appName = @options.targetApp.manifest = null
         notify 'App Cleared.'
+    appClearBtn.setClass 'float-right'
 
 
     appSelectBox = new KDSelectBox
       label: new KDLabelView
         title: 'App:'
+    appSelectBox.setClass 'float-right'
 
     KD.singletons.vmController.run
       vmName    : @options.vmName
@@ -101,6 +111,7 @@ class AppAid.Views.MainView extends KDView
           appClearBtn.show()
           @appAutoCompile.show()
           appCompileBtn.show()
+    appLoadBtn.setClass 'float-right'
 
     @appAutoCompile = new KDMultipleChoice
       labels        : ['Auto', 'Manual']
@@ -110,6 +121,7 @@ class AppAid.Views.MainView extends KDView
         if @autoCompile and not @watching
           notify 'Starting watch..'
           @watchCompile()
+    @appAutoCompile.setClass 'float-right'
 
     appCompileBtn = new KDButtonView
       title     : 'Compile and Preview'
@@ -134,31 +146,23 @@ class AppAid.Views.MainView extends KDView
           if err? then bailErr(err) else @previewCss (err) =>
             if err? then bailErr(err) else @previewApp ->
               notify 'Success!', type: 'tray'
-        
-    appBtns = new KDView
-      cssClass  : 'appaid-btns'
+    appCompileBtn.setClass 'float-right'
+
+    barView = new KDView
+      cssClass  : 'appaid-bar inner-header'
     # Due to the float, these are ordered backwards.
-    appBtns.addSubView appCompileBtn
-    appBtns.addSubView @appAutoCompile
-    appBtns.addSubView appLoadBtn
-    appBtns.addSubView appSelectBox
-    appBtns.addSubView appClearBtn
+    barView.addSubView appCompileBtn
+    barView.addSubView @appAutoCompile
+    barView.addSubView appLoadBtn
+    barView.addSubView appSelectBox
+    barView.addSubView appClearBtn
+    # and now our tests
+    barView.addSubView testBtn
 
     # Hide our loaded-only app buttons.
     appClearBtn.hide()
     appCompileBtn.hide()
     @appAutoCompile.hide()
-
-    # #### Bar Split Section
-    # The bar is the top bar split thing.
-    # Note that this is primarily legacy, but i am keeping it around incase
-    # i want to add more to the bar, outside of appBtns
-    barSplit = new KDSplitView
-      cssClass  : 'appaid-bar inner-header'
-      type      : 'vertical'
-      resizable : false
-      sizes     : ['100%']
-      views     : [appBtns]
 
     @previewView = new KDView()
     # Our CSS DOM Object is used to inject loaded css into our preview.
@@ -169,12 +173,19 @@ class AppAid.Views.MainView extends KDView
       type      : 'horizontal'
       resizable : false
       sizes     : ['40px', '100%']
-      views     : [barSplit, @previewView]
+      views     : [barView, @previewView]
 
     # And finally, add our placeholder view.
     @defaultPreview = new AppAid.Views.PreviewDefault()
     @previewView.addSubView @defaultPreview
 
+
+
+  # ### App Loaded
+  #
+  # Called from an app that has been programmed to integrate with AppAid
+  appLoaded: =>
+    console.log 'App Loaded! Yay!'
 
 
   # ### Watch Compile
@@ -340,7 +351,12 @@ class AppAid.Views.MainView extends KDView
       # By destroying the subviews, we ensure (or try to) that the newly
       # compiled code is applied to a fresh view.
       @previewView.destroySubViews()
-        
+
+      console.log @previewView
+      appAid =
+        view: @previewView
+        loaded: @appLoaded
+
       # We're just using a simple eval on the loaded JS code, 
       # this may be a bit unsafe, but it should be this clients
       # code anyway.

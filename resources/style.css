@@ -1,19 +1,16 @@
 
-.appaid .appaid-bar {
-}
-.appaid .appaid-btns {
-}
-.appaid .appaid-btns > button,
-.appaid .appaid-btns > div {
+.appaid .appaid-bar > .float-right {
   float: right;
   margin: 6px 12px 0 0;
 }
-.appaid .appaid-bar .kdheaderview {
-  border-bottom: 0px;
+.appaid .appaid-bar > .float-left {
+  float: left;
+  margin: 6px 0 0 12px;
 }
 
+
 /* The following fixes a .inner-header related issue */
-.appaid .appaid-btns > button {
+.appaid .appaid-bar > button {
   top: 0;
 }
 .appaid .appaid-bar.inner-header .title {
