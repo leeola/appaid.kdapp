@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "dependencies": {
+    "mocha": "~1.12.1"
+  }
+}

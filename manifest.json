@@ -16,6 +16,7 @@
     "blocks": {
       "app": {
         "files": [
+          "./install.coffee",
           "./node_modules/mocha/mocha.js",
           "./app/core.coffee",
           "./app/utilities.coffee",

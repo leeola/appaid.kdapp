@@ -18,5 +18,10 @@ do ->
   mainView = new MainView()
   appView.addSubView mainView
 
+  # Add the installer
+  appView.addSubView new InstallView
+    appName: 'AppAid'
+    npm: true
+
   # If we're running appAid in AppAid, tell it we loaded. Meta!
   if appAid? then appAid.loaded()

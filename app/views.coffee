@@ -7,6 +7,7 @@
 
 
 
+
 # ## MainView
 #
 class AppAid.Views.MainView extends KDView
@@ -18,6 +19,7 @@ class AppAid.Views.MainView extends KDView
     # the manifest, but it seems during App Initialization that the "in front"
     # app is not entirely known. So, we're grabbing our app manifest manually.
     @options.manifest ?= KD.getAppOptions('AppAid')
+    @options.fsHelperPath = "[#{@options.vmName}]#{@options.manifest.path}"
 
     super @options
 
@@ -30,7 +32,6 @@ class AppAid.Views.MainView extends KDView
     @options.targetApp = {}
     # Soon we'll offer targetted VMs, but for now default it.
     @options.targetApp.vmName = @options.vmName
-
 
     # Autocompile States.
     # @watching means that the process is currently running.
@@ -210,9 +211,8 @@ class AppAid.Views.MainView extends KDView
     # And finally, add our placeholder view.
     @defaultPreview = new AppAid.Views.PreviewDefault()
     @previewView.addSubView @defaultPreview
-
-
-
+  
+    
   # ### App Loaded
   #
   # Called from an app that has been programmed to integrate with AppAid
