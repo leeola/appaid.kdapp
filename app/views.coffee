@@ -8,14 +8,6 @@
 
 
 
-# ## Install View
-#
-class AppAid.Views.InstallView extends KDView
-  constructor: (options={}) ->
-    super options
-
-
-
 # ## MainView
 #
 class AppAid.Views.MainView extends KDView
@@ -219,29 +211,8 @@ class AppAid.Views.MainView extends KDView
     # And finally, add our placeholder view.
     @defaultPreview = new AppAid.Views.PreviewDefault()
     @previewView.addSubView @defaultPreview
- 
-
-
-  # ### Check Installation
-  #
-  checkInstall: (vmName) ->
-    helperPath = "[#{vmName}]#{@options.manifest.path}"
-
-    FSHelper
-      .createFileFromPath("#{@options.fsHelperPath}/node_modules")
-      .exists (err, exists) =>
-        if err? then return notify err
-        if not exists
-          @hide()
-          @parent.addSubView new InstallView mainView:@
-
-
-  # ### Install
-  #
-  installAppAid: ->
-
-
-
+  
+    
   # ### App Loaded
   #
   # Called from an app that has been programmed to integrate with AppAid

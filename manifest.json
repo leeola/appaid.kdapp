@@ -16,6 +16,7 @@
     "blocks": {
       "app": {
         "files": [
+          "./install.coffee",
           "./app/core.coffee",
           "./app/utilities.coffee",
           "./app/views.coffee",
