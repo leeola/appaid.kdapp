@@ -31,5 +31,11 @@
   "options": {
     "type": "tab"
   },
-  "menu": []
+  "menu": [],
+  "packageManagers": {
+    "node": true
+  },
+  "devPackageManagers": {
+    "node": true
+  }
 }
