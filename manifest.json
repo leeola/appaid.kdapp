@@ -31,5 +31,6 @@
   "menu": [],
   "devPackageManagers": {
     "node": true
-  }
+  },
+  "commonjs": true
 }
