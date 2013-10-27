@@ -29,8 +29,17 @@
     "type": "tab"
   },
   "menu": [],
-  "devPackageManagers": {
-    "node": true
-  },
-  "commonjs": true
+  "plus": {
+    "devPackageManagers": {
+      "node": true
+    },
+    "commonjs": true,
+    "coffee": true,
+    "files": {
+      "./node_modules/mocha/mocha.js": {
+        "commonjs": false,
+        "coffee": false
+      }
+    }
+  }
 }
