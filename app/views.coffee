@@ -1,8 +1,9 @@
 # 
 # # App Views
 #
-core      = require './core'
-{notify}  = require './utils'
+core          = require './core'
+isolated_eval = require './isolated_eval'
+{notify}      = require './utils'
 
 
 
