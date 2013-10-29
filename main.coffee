@@ -1,9 +1,7 @@
 # 
 # # App Index
 #
-
-# Our App variable is global, defined in `./app/core.coffee`
-{MainView} = AppAid.Views
+{MainView} = require './app/views'
 
 do ->
   console.log "AppAid Loaded into id:#{appView.id}"

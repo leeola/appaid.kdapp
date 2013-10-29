@@ -1,13 +1,12 @@
 # 
 # # Utilities
 #
-{Utilities} = AppAid
 
 
 
 # # Notify
 #
-Utilities.notify = (message, options={})->
+notify = (message, options={})->
   if typeof message is 'string'
     options.title = message
   else
@@ -15,3 +14,4 @@ Utilities.notify = (message, options={})->
   new KDNotificationView options
 
 
+exports.notify  = notify

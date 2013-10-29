@@ -1,16 +1,21 @@
 # 
 # # App Views
 #
-{Settings}  = AppAid
-{notify}    = AppAid.Utilities
+core      = require './core'
+{notify}  = require './utils'
 
+
+
+
+USER      = KD.nick()
+HOME      = "/home/#{USER}"
 
 
 
 
 # ## MainView
 #
-class AppAid.Views.MainView extends KDView
+class MainView extends KDView
   constructor: (@options={})->
     @options.cssClass ?= "appaid"
     @options.vmName ?= KD.singletons.vmController.defaultVmName
@@ -209,7 +214,7 @@ class AppAid.Views.MainView extends KDView
       views     : [barView, @previewView]
 
     # And finally, add our placeholder view.
-    @defaultPreview = new AppAid.Views.PreviewDefault()
+    @defaultPreview = new PreviewDefault()
     @previewView.addSubView @defaultPreview
   
     
@@ -374,7 +379,7 @@ class AppAid.Views.MainView extends KDView
     if appView?.id isnt @previewView.id
       console.log "Overwriting local appView. Previous id:#{@parent.id}, "+
         "new id:#{@previewView.id}"
-      appView = @previewView
+      #appView = @previewView
     
     @appIndexHelper.fetchContents (err, res) =>
       note.destroy()
@@ -393,7 +398,7 @@ class AppAid.Views.MainView extends KDView
       # this may be a bit unsafe, but it should be this clients
       # code anyway.
       try
-        eval res
+        isolated_eval res, @previewView
       catch e
         new KDModalView
           title     : "#{manifestAppName} Error: #{e.name}"
@@ -440,8 +445,6 @@ class AppAid.Views.MainView extends KDView
         if err? then return callback err
         concatedCss += res
         concatCss ++index
-      
-    
 
 
 
@@ -449,7 +452,7 @@ class AppAid.Views.MainView extends KDView
 # ## Preview Default
 #
 # The view that is loaded in the previewView by default.
-class AppAid.Views.PreviewDefault extends JView
+class PreviewDefault extends JView
   constructor: -> super
 
   pistachio: ->
@@ -465,3 +468,7 @@ class AppAid.Views.PreviewDefault extends JView
     """
 
 
+
+
+exports.MainView      = MainView
+exports.PreviewDefult = PreviewDefault
