@@ -17,10 +17,7 @@
       "app": {
         "files": [
           "./node_modules/mocha/mocha.js",
-          "./app/core.coffee",
-          "./app/utilities.coffee",
-          "./app/views.coffee",
-          "./index.coffee"
+          "./main.coffee"
         ]
       }
     },
@@ -32,10 +29,17 @@
     "type": "tab"
   },
   "menu": [],
-  "packageManagers": {
-    "node": true
-  },
-  "devPackageManagers": {
-    "node": true
+  "plus": {
+    "devPackageManagers": {
+      "node": true
+    },
+    "commonjs": true,
+    "coffee": true,
+    "files": {
+      "./node_modules/mocha/mocha.js": {
+        "commonjs": false,
+        "coffee": false
+      }
+    }
   }
 }
