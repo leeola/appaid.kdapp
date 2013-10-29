@@ -302,9 +302,16 @@ class MainView extends KDView
       duration      : 60000
       closeManually : false
 
+    # Bit of a hack, but we're just forcing the kdc-plus usage if plus options
+    # are detected.
+    if @options.manifest.plus?
+      compiler  = 'kdc-plus compile'
+    else
+      compiler  = 'kdc'
+
     KD.singletons.vmController.run
       vmName    : vmName
-      withArgs  : "kdc ~/Applications/#{appName}"
+      withArgs  : "#{compiler} ~/Applications/#{appName}"
       (err, res) ->
         note.destroy()
         if err?
