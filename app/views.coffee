@@ -376,12 +376,6 @@ class MainView extends KDView
       duration      : 60000
       closeManually : false
 
-    # Let the hacks begin.
-    if appView?.id isnt @previewView.id
-      console.log "Overwriting local appView. Previous id:#{@parent.id}, "+
-        "new id:#{@previewView.id}"
-      #appView = @previewView
-    
     @appIndexHelper.fetchContents (err, res) =>
       note.destroy()
       if err? then return callback err
@@ -390,7 +384,8 @@ class MainView extends KDView
       # compiled code is applied to a fresh view.
       @previewView.destroySubViews()
 
-      console.log @previewView
+      # Our appAid object is passed in to allow the child application to signal
+      # when it is done loading. Allowing us to start tests, etc.
       appAid =
         view: @previewView
         loaded: @appLoaded
@@ -399,7 +394,7 @@ class MainView extends KDView
       # this may be a bit unsafe, but it should be this clients
       # code anyway.
       try
-        isolated_eval res, @previewView
+        isolated_eval res, @previewView, appAid
       catch e
         new KDModalView
           title     : "#{manifestAppName} Error: #{e.name}"

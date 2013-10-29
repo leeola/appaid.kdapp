@@ -11,5 +11,5 @@
 
 
 
-module.exports = (code, appView) ->
+module.exports = (code, appView, appAid) ->
   eval code
