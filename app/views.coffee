@@ -17,7 +17,7 @@ class AppAid.Views.MainView extends KDView
     # We used to use `KD.singletons.appManager.getFrontAppManifest()` to get
     # the manifest, but it seems during App Initialization that the "in front"
     # app is not entirely known. So, we're grabbing our app manifest manually.
-    @options.manifest ?= KD.getAppOptions('AppAid')
+    @options.manifest ?= KD.getAppOptions('Appaid')
 
     super @options
 

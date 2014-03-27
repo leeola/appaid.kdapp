@@ -29,6 +29,6 @@ do ->
       name     : "Appaid"
       routes   :
         "/:name?/Appaid" : null
-        "/:name?/leeo/Apps/Appaid" : null
-      dockPath : "/leeo/Apps/Appaid"
+        "/:name?/leeolayvar/Apps/Appaid" : null
+      dockPath : "/leeolayvar/Apps/Appaid"
       behavior : "application"
