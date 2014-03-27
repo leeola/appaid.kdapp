@@ -55,12 +55,13 @@ class AppAid.Views.MainView extends KDView
       label: new KDLabelView
         title: 'App:'
 
+
     KD.singletons.vmController.run
       vmName    : @options.vmName
       withArgs  : "ls ~/Applications"
-      (err, res) =>
+      (err, {stdout, stderr, exitStatus}) =>
         if err? then notify err.message; return
-        kdAppNames = res.split('\n')[...-1]
+        kdAppNames = stdout.split('\n')[...-1]
         kdAppNameOpt = []
         for appname in kdAppNames
           #if appname is 'appaid.kdapp' then continue
@@ -195,13 +196,13 @@ class AppAid.Views.MainView extends KDView
     KD.singletons.vmController.run
       vmName    : vmName
       withArgs  : "#{thisAppPath}/bin/watch.js ~/Applications/#{appName}"
-      (err, res) =>
+      (err, {stdout, stderr, exitStatus}) =>
         @watching = false
         if err? then return errBail err
 
-        coFiles = /\.coffee/.test res
-        cssFiles = /\.css/.test res
-        console.log('Watch returned!', coFiles, cssFiles, res)
+        coFiles = /\.coffee/.test stdout
+        cssFiles = /\.css/.test stdout
+        console.log('Watch returned!', coFiles, cssFiles, stdout)
 
         if not KD.singletons.appManager.get(@options.manifest.name)?
           console.log 'Watch returned, but app is closed. Exiting.'
@@ -253,17 +254,19 @@ class AppAid.Views.MainView extends KDView
     KD.singletons.vmController.run
       vmName    : vmName
       withArgs  : "kdc ~/Applications/#{appName}"
-      (err, res) ->
+      (err, {stdout, stderr, exitStatus}) ->
         note.destroy()
+        # **IMPORTANT**: Much of this will be changing soon, since KD now supports
+        # proper stdout/stderr.
         if err?
           # Errors from KDC are handled oddly. The error object is the return
           # code from the process, and the response is the actual error
           # message. With this information, we want to change our error
           # object to be more informative.
-          err.stack = res
+          err.stack = stdout
           # Note that the following line is very hacky. We may want to improve
           # this .. or at least make this more robust.
-          [err.name, err.message] = res.split('\n')[0].split ': '
+          [err.name, err.message] = stdout.split('\n')[0].split ': '
           callback err
 
         notify "Compile completed", type: 'tray'
