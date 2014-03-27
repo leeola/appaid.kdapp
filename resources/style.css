@@ -4,10 +4,16 @@
 .appaid .appaid-btns {
 }
 .appaid .appaid-btns > button,
+.appaid .appaid-btns > button.kdbutton,
 .appaid .appaid-btns > div {
   float: right;
   margin: 6px 12px 0 0;
 }
+
+.appaid .appaid-btns > .kdbutton.small {
+  padding: 0 12px;
+}
+
 .appaid .appaid-bar .kdheaderview {
   border-bottom: 0px;
 }

@@ -42,6 +42,7 @@ class AppAid.Views.MainView extends KDView
     # #### App Split Section
     # Our app split section defines the views for the app selection splitview.
     appClearBtn = new KDButtonView
+      cssClass  : 'solid small red'
       title     : 'Clear App'
       callback  : =>
         console.log 'Clearing App'
@@ -71,6 +72,7 @@ class AppAid.Views.MainView extends KDView
         @options.targetApp.appName = appSelectBox.getValue()
 
     appLoadBtn = new KDButtonView
+      cssClass  : 'solid small'
       title     : 'Load App'
       callback  : =>
         appName = @options.targetApp.appName = appSelectBox.getValue()
@@ -109,6 +111,7 @@ class AppAid.Views.MainView extends KDView
           @watchCompile()
 
     appCompileBtn = new KDButtonView
+      cssClass  : 'solid small green'
       title     : 'Compile and Preview'
       callback  : =>
         if not @options.targetApp.manifest?
@@ -134,7 +137,7 @@ class AppAid.Views.MainView extends KDView
           if err? then bailErr(err) else @previewCss (err) =>
             if err? then bailErr(err) else @previewApp ->
               notify 'Success!', type: 'tray'
-        
+
     appBtns = new KDView
       cssClass  : 'appaid-btns'
     # Due to the float, these are ordered backwards.
@@ -143,20 +146,6 @@ class AppAid.Views.MainView extends KDView
     appBtns.addSubView appLoadBtn
     appBtns.addSubView appSelectBox
     appBtns.addSubView appClearBtn
-
-
-    # #### Bar Split Section
-    # The bar is the top bar split thing.
-    barHeader = new KDHeaderView
-      title     : @options.manifest.description
-      type      : 'medium'
-
-    barSplit = new KDSplitView
-      cssClass  : 'appaid-bar inner-header'
-      type      : 'vertical'
-      resizable : false
-      sizes     : ['40%', '60%']
-      views     : [barHeader, appBtns]
 
     @previewView = new KDView()
     # Our CSS DOM Object is used to inject loaded css into our preview.
@@ -167,7 +156,7 @@ class AppAid.Views.MainView extends KDView
       type      : 'horizontal'
       resizable : false
       sizes     : ['40px', '100%']
-      views     : [barSplit, @previewView]
+      views     : [appBtns, @previewView]
 
     # And finally, add our placeholder view.
     @defaultPreview = new AppAid.Views.PreviewDefault()
@@ -347,6 +336,7 @@ class AppAid.Views.MainView extends KDView
       try
         eval res
       catch e
+        console.log "Error encountered during app load: #{e}"
         new KDModalView
           title     : "#{manifestAppName} Error: #{e.name}"
           width     : 700 # Pixels
