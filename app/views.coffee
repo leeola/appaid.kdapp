@@ -171,31 +171,6 @@ class AppAid.Views.MainView extends KDView
     @previewView.addSubView @defaultPreview
 
 
-  # ### Install Watch
-  #
-  # Koding applications do not install to the user system, so in this function
-  # we curl the watcher.js file from the repo (github) and write it to the user
-  # file system.
-  installWatch: (callback=->) ->
-    watchBinUrl = "https://raw.githubusercontent.com/leeolayvar/appaid.kdapp/master/bin/watch.js"
-
-    curlScript = """
-    mkdir -p ~/Applications/.appaid && \
-    curl -f -s -o ~/Applications/.appaid/watch.js #{watchBinUrl} && \
-    chmod +x ~/Applications/.appaid/watch.js
-    """
-
-    KD.singletons.vmController.run
-      vmName: vmName
-      withArgs: curlScript
-      (err, res) =>
-        if err? then return callback err
-        {stdout, stderr, exitStatus} = res
-        if exitStatus is 22 then return callback new Error "Unknown Curl Error"
-        if exitStatus isnt 0 then return callback new Error "Unknown Install Error"
-        return callback null
-
-
 
   # ### Watch Compile
   #
