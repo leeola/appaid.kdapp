@@ -5,6 +5,16 @@
 {notify}    = AppAid.Utilities
 
 
+class AppWatcher extends FSWatcher
+  constructor: (options) ->
+    options.throttle ?= 3000
+    super
+
+  fileChanged: (change) ->
+    @throttle @emit 'SourceChanged', change.file.name, change.file.fullPath
+
+  throttle: (callback) -> KD.utils.throttle @getOption('throttle'), callback
+
 
 
 # ## MainView
@@ -106,9 +116,7 @@ class AppAid.Views.MainView extends KDView
           return
 
         @autoCompile = if state is 'Auto' then true  else false
-        if @autoCompile and not @watching
-          notify 'Starting watch..'
-          @watchCompile()
+        if @autoCompile and not @watching then @watchCompile()
 
     appCompileBtn = new KDButtonView
       cssClass  : 'solid small green'
@@ -163,6 +171,31 @@ class AppAid.Views.MainView extends KDView
     @previewView.addSubView @defaultPreview
 
 
+  # ### Install Watch
+  #
+  # Koding applications do not install to the user system, so in this function
+  # we curl the watcher.js file from the repo (github) and write it to the user
+  # file system.
+  installWatch: (callback=->) ->
+    watchBinUrl = "https://raw.githubusercontent.com/leeolayvar/appaid.kdapp/master/bin/watch.js"
+
+    curlScript = """
+    mkdir -p ~/Applications/.appaid && \
+    curl -f -s -o ~/Applications/.appaid/watch.js #{watchBinUrl} && \
+    chmod +x ~/Applications/.appaid/watch.js
+    """
+
+    KD.singletons.vmController.run
+      vmName: vmName
+      withArgs: curlScript
+      (err, res) =>
+        if err? then return callback err
+        {stdout, stderr, exitStatus} = res
+        if exitStatus is 22 then return callback new Error "Unknown Curl Error"
+        if exitStatus isnt 0 then return callback new Error "Unknown Install Error"
+        return callback null
+
+
 
   # ### Watch Compile
   #
@@ -171,7 +204,7 @@ class AppAid.Views.MainView extends KDView
       appName
       vmName
     } = @options.targetApp
-    thisAppPath = @options.manifest.path
+    binPath = '~/Applications/.appaid/watch.js'
 
     errBail = (err) =>
       notify "Error: #{err.message}"
@@ -180,52 +213,52 @@ class AppAid.Views.MainView extends KDView
 
     if @waching then return
     @watching = true
+
+    console.log 'Debugging my manifest'
     
     console.log 'Executing watch..'
-    KD.singletons.vmController.run
-      vmName    : vmName
-      withArgs  : "#{thisAppPath}/bin/watch.js ~/Applications/#{appName}"
-      (err, {stdout, stderr, exitStatus}) =>
-        @watching = false
-        if err? then return errBail err
 
-        coFiles = /\.coffee/.test stdout
-        cssFiles = /\.css/.test stdout
-        console.log('Watch returned!', coFiles, cssFiles, stdout)
+    watcher = new AppWatcher
+      path: "~/Applications/#{appName}"
+    watcher.watch()
+    watcher.on 'SourceChanged', (file, path) =>
+      console.log 'Source Changed', file, path
 
-        if not KD.singletons.appManager.get(@options.manifest.name)?
-          console.log 'Watch returned, but app is closed. Exiting.'
-          return
-        if not @autoCompile then return
+      coFiles = /\.coffee/.test file
+      cssFiles = /\.css/.test file
+      console.log('Watch returned!', coFiles, cssFiles)
 
-        if coFiles or cssFiles
-          notify "Change detected",
-            type: 'tray'
-            duration: 4000
-            closeManually: true
+      if not KD.singletons.appManager.get(@options.manifest.name)?
+        console.log 'Watch returned, but app is closed. Exiting.'
+        return
+      if not @autoCompile then return
+
+      if coFiles or cssFiles
+        notify "Change detected",
+          type: 'tray'
+          duration: 4000
+          closeManually: true
 
 
-        checkPreviewApp = =>
-          console.log 'check preview'
-          if not coFiles then return @watchCompile()
-          @previewApp (err) =>
-            if err? then return errBail err
-            @watchCompile()
+      checkPreviewApp = =>
+        console.log 'check preview'
+        if not coFiles then return 
+        @previewApp (err) =>
+          if err? then return errBail err
 
-        checkPreviewCss = =>
-          console.log 'check css'
-          if not cssFiles then return checkPreviewApp()
-          @previewCss (err) ->
-            if err? then return errBail err
-            checkPreviewApp()
+      checkPreviewCss = =>
+        console.log 'check css'
+        if not cssFiles then return checkPreviewApp()
+        @previewCss (err) ->
+          if err? then return errBail err
+          checkPreviewApp()
 
-        do checkCompileApp = =>
-          console.log 'check compile'
-          if not coFiles then return checkPreviewCss()
-          @compileApp (err) ->
-            if err? then return errBail err
-            checkPreviewCss()
-
+      do checkCompileApp = =>
+        console.log 'check compile'
+        if not coFiles then return checkPreviewCss()
+        @compileApp (err) ->
+          if err? then return errBail err
+          checkPreviewCss()
 
 
   # ### Compile App
