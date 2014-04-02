@@ -1,25 +1,15 @@
 # 
 # # App Views
 #
-{Settings}  = AppAid
-{notify}    = AppAid.Utilities
+{notify} = require './utilities'
 
 
-class AppWatcher extends FSWatcher
-  constructor: (options) ->
-    options.throttle ?= 3000
-    super
-
-  fileChanged: (change) ->
-    @throttle @emit 'SourceChanged', change.file.name, change.file.fullPath
-
-  throttle: (callback) -> KD.utils.throttle @getOption('throttle'), callback
 
 
 
 # ## MainView
 #
-class AppAid.Views.MainView extends KDView
+class MainView extends KDView
   constructor: (@options={})->
     @options.cssClass ?= "appaid"
     @options.vmName ?= KD.singletons.vmController.defaultVmName
@@ -167,7 +157,7 @@ class AppAid.Views.MainView extends KDView
       views     : [appBtns, @previewView]
 
     # And finally, add our placeholder view.
-    @defaultPreview = new AppAid.Views.PreviewDefault()
+    @defaultPreview = new PreviewDefault()
     @previewView.addSubView @defaultPreview
 
 
@@ -393,13 +383,10 @@ class AppAid.Views.MainView extends KDView
       
     
 
-
-
-
 # ## Preview Default
 #
 # The view that is loaded in the previewView by default.
-class AppAid.Views.PreviewDefault extends JView
+class PreviewDefault extends JView
   constructor: -> super
 
   pistachio: ->
@@ -415,3 +402,7 @@ class AppAid.Views.PreviewDefault extends JView
     """
 
 
+
+
+exports.MainView       = MainView
+exports.PreviewDefault = PreviewDefault

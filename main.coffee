@@ -1,19 +1,13 @@
 # 
-# # App Index
+# # Appaid Entry
 #
+# The main entry point for our app.
+#
+{AppaidController} = require './app/controllers'
+{MainView}         = require './app/views'
 
-# Our App variable is global, defined in `./app/core.coffee`
-{MainView} = AppAid.Views
 
-# AppControllers are new to me, so this is undocumented/unknown.
-class AppaidController extends AppController
-  constructor:(options = {}, data)->
-    options.view    = new MainView
-    options.appInfo =
-      name : "Appaid"
-      type : "application"
 
-    super options, data
 
 do ->
   if appView?

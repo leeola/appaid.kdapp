@@ -2,6 +2,8 @@
 
 - Updated UI to GreenKD (WIP)
 - Converting to usage with "Green" Koding.
+- Appaid now uses a Gulp build
+- Appaid struct is now based around CommonJS!
 
 # 0.1.3 / 2013-09-03
 

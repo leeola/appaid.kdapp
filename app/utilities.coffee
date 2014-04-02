@@ -1,13 +1,15 @@
 # 
 # # Utilities
 #
-{Utilities} = AppAid
+
 
 
 
 # # Notify
 #
-Utilities.notify = (message, options={})->
+# This is rather hacky at the moment, and should likely be a view of it's own
+# in the near future.
+notify = (message, options={})->
   if typeof message is 'string'
     options.title = message
   else
@@ -15,3 +17,5 @@ Utilities.notify = (message, options={})->
   new KDNotificationView options
 
 
+
+exports.notify = notify
