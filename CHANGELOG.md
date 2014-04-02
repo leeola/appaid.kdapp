@@ -4,6 +4,7 @@
 - Converting to usage with "Green" Koding.
 - Appaid now uses a Gulp build
 - Appaid struct is now based around CommonJS!
+- Added isolated Eval, see `./app/isolated_eval.coffee` for more info.
 
 # 0.1.3 / 2013-09-03
 

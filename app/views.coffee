@@ -5,8 +5,9 @@
 # logic from all of the views. These views are very, very logic heavy
 # currently.
 #
-{AppWatcher} = require './controllers'
-{notify}     = require './utilities'
+{AppWatcher}  = require './controllers'
+isolated_eval = require './isolated_eval'
+{notify}      = require './utilities'
 
 
 
@@ -333,11 +334,8 @@ class MainView extends KDView
       # compiled code is applied to a fresh view.
       @previewView.destroySubViews()
         
-      # We're just using a simple eval on the loaded JS code, 
-      # this may be a bit unsafe, but it should be this clients
-      # code anyway.
       try
-        eval res
+        isolated_eval res, @previewView, appAid
       catch e
         console.log "Error encountered during app load: #{e}"
         new KDModalView
