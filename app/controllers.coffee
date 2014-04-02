@@ -6,6 +6,10 @@
 
 
 
+# ## AppaidController
+#
+# The main controller for this app. I'm not clear on this usage yet,
+# since it's new with "GreenKD"
 class AppaidController extends AppController
   constructor:(options = {}, data)->
     options.view    = new MainView
@@ -17,6 +21,10 @@ class AppaidController extends AppController
 
 
 
+# ## AppWatcher
+#
+# This class simply watches a given directory and responds back with the
+# changed info.
 class AppWatcher extends FSWatcher
   constructor: (options) ->
     options.throttle ?= 3000

@@ -1,6 +1,10 @@
 # 
 # # App Views
 #
+# **NOTICE**: This module is in need of a mild rewrite, to separate some
+# logic from all of the views. These views are very, very logic heavy
+# currently.
+#
 {AppWatcher} = require './controllers'
 {notify}     = require './utilities'
 
