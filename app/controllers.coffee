@@ -31,3 +31,4 @@ class AppWatcher extends FSWatcher
 
 
 exports.AppaidController = AppaidController
+exports.AppWatcher       = AppWatcher

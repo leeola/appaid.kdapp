@@ -1,7 +1,8 @@
 # 
 # # App Views
 #
-{notify} = require './utilities'
+{AppWatcher} = require './controllers'
+{notify}     = require './utilities'
 
 
 
