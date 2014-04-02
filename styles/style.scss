@@ -1,3 +1,9 @@
+//
+// # Appaid Styles
+//
+// Appaid sass styles, which compile to ../resources/style.css
+//
+
 
 .appaid .appaid-bar {
 }
@@ -18,7 +24,7 @@
   border-bottom: 0px;
 }
 
-/* The following fixes a .inner-header related issue */
+// The following fixes a .inner-header related issue
 .appaid .appaid-btns > button {
   top: 0;
 }
@@ -29,10 +35,10 @@
   line-height: 24px;
 }
 
-/* The KDF is causing a weird overflow on any resize of the viewport.
- * this is in place to stop that.. it's a hack, but i can't figure out
- * the real cause.. so this fixes it.
- */
+// The KDF is causing a weird overflow on any resize of the viewport.
+// this is in place to stop that.. it's a hack, but i can't figure out
+// the real cause.. so this fixes it.
+// 
 .appaid > .kdsplitview-horizontal > .panel-0 {
   overflow: hidden;
 }

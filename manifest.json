@@ -15,6 +15,7 @@
   "repository": "git://github.com/leeolayvar/appaid.kdapp.git",
   "description": "Appaid : a Koding application created with the blank template.",
   "category": "web-app",
+  "build": "npm run build",
   "source": {
     "blocks": {
       "app": {
@@ -22,7 +23,7 @@
           "./app/core.coffee",
           "./app/utilities.coffee",
           "./app/views.coffee",
-          "./index.coffee"
+          "./main.coffee"
         ]
       }
     },
