@@ -20,6 +20,6 @@
 
 
 
-module.exports = (code, appView, appAid) ->
+module.exports = (code, appView) ->
   eval code
 

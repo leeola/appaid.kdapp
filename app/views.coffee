@@ -335,7 +335,7 @@ class MainView extends KDView
       @previewView.destroySubViews()
         
       try
-        isolated_eval res, @previewView, appAid
+        isolated_eval res, @previewView
       catch e
         console.log "Error encountered during app load: #{e}"
         new KDModalView
